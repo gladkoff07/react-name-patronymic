@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta
+      name="description"
+      content="Образование отчества по имени отца: Иван → Иванович и Ивановна. Словарь популярных имён и правила словообразования."
+    />
+    <title>Отчество по имени отца</title>
+    <script>
+      try {
+        const stored = JSON.parse(localStorage.getItem('patronymic:settings') || 'null')
+        const theme =
+          stored?.state?.theme ??
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        if (theme === 'dark') document.documentElement.classList.add('dark')
+      } catch {
+        /* localStorage недоступен — остаёмся на светлой теме */
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
