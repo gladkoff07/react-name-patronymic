@@ -19,11 +19,13 @@ export const suggestions: string[] = entries
 
 const byName = new Map<string, NameEntry>()
 const byAlias = new Map<string, NameEntry[]>()
-const byPatronymic = new Map<string, NameEntry>()
+const byMalePatronymic = new Map<string, NameEntry[]>()
+const byFemalePatronymic = new Map<string, NameEntry[]>()
 
 for (const entry of entries) {
   byName.set(toLookupKey(entry.name), entry)
-  byPatronymic.set(toLookupKey(entry.male), entry)
+  pushToIndex(byMalePatronymic, toLookupKey(entry.male), entry)
+  pushToIndex(byFemalePatronymic, toLookupKey(entry.female), entry)
 
   for (const alias of entry.aliases ?? []) {
     const key = toLookupKey(alias)
@@ -42,7 +44,20 @@ export function findAliasEntries(key: string): NameEntry[] | undefined {
   return byAlias.get(key)
 }
 
-/** Обратный поиск: «Петрович» → Пётр. Пригодится для режима «отчество → имя». */
-export function findByPatronymic(value: string): NameEntry | undefined {
-  return byPatronymic.get(toLookupKey(value))
+/** Обратный поиск: «Петрович» и «Петровна» → Пётр. */
+export function findByPatronymic(value: string): NameEntry[] {
+  const key = toLookupKey(value)
+  const male = byMalePatronymic.get(key) ?? []
+  const female = byFemalePatronymic.get(key) ?? []
+
+  if (male.length === 0) return female
+  if (female.length === 0) return male
+
+  return [...new Set([...male, ...female])]
+}
+
+function pushToIndex(index: Map<string, NameEntry[]>, key: string, entry: NameEntry) {
+  const list = index.get(key) ?? []
+  list.push(entry)
+  index.set(key, list)
 }

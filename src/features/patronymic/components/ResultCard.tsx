@@ -5,6 +5,8 @@ interface ResultCardProps {
   label: string
   patronymic: string
   source: ResultSource
+  /** Что показать вместо `patronymic`, например форму со знаком ударения. */
+  display?: string
 }
 
 const sourceMeta: Record<ResultSource, { label: string; className: string }> = {
@@ -25,7 +27,7 @@ const sourceMeta: Record<ResultSource, { label: string; className: string }> = {
   },
 }
 
-export function ResultCard({ label, patronymic, source }: ResultCardProps) {
+export function ResultCard({ label, patronymic, source, display }: ResultCardProps) {
   const meta = sourceMeta[source]
 
   return (
@@ -35,7 +37,7 @@ export function ResultCard({ label, patronymic, source }: ResultCardProps) {
           {label}
         </p>
         <p className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-          {patronymic}
+          {display ?? patronymic}
         </p>
       </div>
 

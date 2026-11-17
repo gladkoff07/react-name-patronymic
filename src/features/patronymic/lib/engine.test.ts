@@ -158,7 +158,15 @@ describe('ошибки ввода', () => {
 
 describe('обратный поиск', () => {
   it('находит имя отца по отчеству', () => {
-    expect(findByPatronymic('Петрович')?.name).toBe('Пётр')
-    expect(findByPatronymic('ильич')?.name).toBe('Илья')
+    expect(findByPatronymic('Петрович')[0]?.name).toBe('Пётр')
+    expect(findByPatronymic('ильич')[0]?.name).toBe('Илья')
+  })
+
+  it('находит отчество по женской форме', () => {
+    expect(findByPatronymic('Петровна')[0]?.name).toBe('Пётр')
+  })
+
+  it('возвращает пустой список для незнакомого отчества', () => {
+    expect(findByPatronymic('Эльдарович')).toEqual([])
   })
 })

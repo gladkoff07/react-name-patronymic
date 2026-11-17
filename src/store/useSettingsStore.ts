@@ -7,6 +7,8 @@ interface SettingsState {
   theme: Theme
   setTheme: (theme: Theme) => void
   toggleTheme: () => void
+  showStress: boolean
+  toggleStress: () => void
 }
 
 function getPreferredTheme(): Theme {
@@ -20,6 +22,8 @@ export const useSettingsStore = create<SettingsState>()(
       theme: getPreferredTheme(),
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+      showStress: false,
+      toggleStress: () => set((state) => ({ showStress: !state.showStress })),
     }),
     { name: 'patronymic:settings' },
   ),

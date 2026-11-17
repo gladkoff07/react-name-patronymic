@@ -34,3 +34,26 @@ export interface PatronymicError {
 export type PatronymicOutcome =
   | { ok: true; result: PatronymicResult }
   | { ok: false; error: PatronymicError }
+
+export interface ReverseMatch {
+  name: string
+  male: string
+  female: string
+}
+
+export interface ReverseResult {
+  /** Отчество в нормализованном виде. */
+  input: string
+  matches: ReverseMatch[]
+}
+
+export type ReverseErrorCode = 'empty' | 'latin' | 'invalid' | 'too_long' | 'not_found'
+
+export interface ReverseError {
+  code: ReverseErrorCode
+  message: string
+}
+
+export type ReverseOutcome =
+  | { ok: true; result: ReverseResult }
+  | { ok: false; error: ReverseError }
