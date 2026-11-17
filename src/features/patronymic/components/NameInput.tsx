@@ -10,15 +10,45 @@ const listboxId = `${inputId}-listbox`
 
 const optionId = (index: number) => `${inputId}-option-${index}`
 
+interface Suggestion {
+  value: string
+  hint: string
+}
+
 const maleByName = new Map(entries.map((entry) => [entry.name, entry.male]))
+const canonicalKeys = new Set(entries.map((entry) => toLookupKey(entry.name)))
+
+const aliasTargets = new Map<string, { alias: string; names: string[] }>()
+for (const entry of entries) {
+  for (const alias of entry.aliases ?? []) {
+    const key = toLookupKey(alias)
+    if (canonicalKeys.has(key)) continue
+
+    const existing = aliasTargets.get(key)
+    if (existing) {
+      if (!existing.names.includes(entry.name)) existing.names.push(entry.name)
+    } else {
+      aliasTargets.set(key, { alias, names: [entry.name] })
+    }
+  }
+}
+
+const allSuggestions: Suggestion[] = [
+  ...suggestions.map((name) => ({ value: name, hint: maleByName.get(name) ?? '' })),
+  ...[...aliasTargets.values()]
+    .sort((a, b) => a.alias.localeCompare(b.alias, 'ru'))
+    .map(({ alias, names }) => ({ value: alias, hint: names.join(', ') })),
+]
 
 interface NameInputProps {
   value: string
   onChange: (value: string) => void
+  /** Вызывается, когда пользователь закончил ввод: выбор, Enter или уход из поля. */
+  onCommit?: (value: string) => void
   error?: string
 }
 
-export function NameInput({ value, onChange, error }: NameInputProps) {
+export function NameInput({ value, onChange, onCommit, error }: NameInputProps) {
   const [open, setOpen] = useState(false)
   const [highlighted, setHighlighted] = useState(-1)
 
@@ -28,8 +58,8 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
 
   const filtered = useMemo(() => {
     const query = toLookupKey(value)
-    if (!query) return suggestions
-    return suggestions.filter((name) => toLookupKey(name).includes(query))
+    if (!query) return allSuggestions
+    return allSuggestions.filter((suggestion) => toLookupKey(suggestion.value).includes(query))
   }, [value])
 
   useEffect(() => {
@@ -47,11 +77,12 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
 
   useEffect(() => {
     if (!open || highlighted < 0) return
-    optionRefs.current[highlighted]?.scrollIntoView({ block: 'nearest' })
+    optionRefs.current[highlighted]?.scrollIntoView?.({ block: 'nearest' })
   }, [open, highlighted])
 
-  function select(name: string) {
-    onChange(name)
+  function select(next: string) {
+    onChange(next)
+    onCommit?.(next)
     setOpen(false)
     setHighlighted(-1)
     inputRef.current?.focus()
@@ -83,10 +114,15 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
       return
     }
 
-    if (event.key === 'Enter' && open && highlighted >= 0) {
-      event.preventDefault()
-      const name = filtered[highlighted]
-      if (name) select(name)
+    if (event.key === 'Enter') {
+      if (open && highlighted >= 0) {
+        event.preventDefault()
+        const suggestion = filtered[highlighted]
+        if (suggestion) select(suggestion.value)
+        return
+      }
+      setOpen(false)
+      onCommit?.(value)
     }
   }
 
@@ -112,6 +148,10 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
           onFocus={() => setOpen(true)}
           onClick={() => setOpen(true)}
           onKeyDown={handleKeyDown}
+          onBlur={(event) => {
+            if (containerRef.current?.contains(event.relatedTarget as Node)) return
+            onCommit?.(value)
+          }}
           type="text"
           role="combobox"
           aria-expanded={open}
@@ -152,11 +192,11 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
               className="max-h-72 overflow-y-auto overscroll-contain p-1.5 [scrollbar-width:thin]"
             >
               {filtered.length > 0 ? (
-                filtered.map((name, index) => {
+                filtered.map((suggestion, index) => {
                   const active = index === highlighted
                   return (
                     <div
-                      key={name}
+                      key={suggestion.value}
                       id={optionId(index)}
                       role="option"
                       aria-selected={active}
@@ -165,16 +205,18 @@ export function NameInput({ value, onChange, error }: NameInputProps) {
                       }}
                       onMouseDown={(event) => event.preventDefault()}
                       onMouseEnter={() => setHighlighted(index)}
-                      onClick={() => select(name)}
+                      onClick={() => select(suggestion.value)}
                       className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm transition ${
                         active
                           ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-500/15 dark:text-indigo-100'
                           : 'text-slate-700 dark:text-slate-300'
                       }`}
                     >
-                      <span className="truncate">{highlightMatch(name, value)}</span>
-                      <span className="shrink-0 text-xs text-slate-400 dark:text-slate-500">
-                        {maleByName.get(name)}
+                      <span className="truncate">
+                        {highlightMatch(suggestion.value, value)}
+                      </span>
+                      <span className="max-w-[45%] shrink-0 truncate text-xs text-slate-400 dark:text-slate-500">
+                        {suggestion.hint}
                       </span>
                     </div>
                   )
