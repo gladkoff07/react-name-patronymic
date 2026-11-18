@@ -23,7 +23,7 @@ export function RouteTabs({ route }: { route: Route }) {
             className={`rounded-xl px-2 py-2 text-center text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none sm:text-sm ${
               active
                 ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
-                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                : 'text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white'
             }`}
           >
             {tab.label}

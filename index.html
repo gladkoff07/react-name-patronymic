@@ -3,13 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#4f46e5" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Образование отчества по имени отца: Иван → Иванович и Ивановна. Словарь популярных имён и правила словообразования."
+      content="Образование отчества по имени отца: Иван → Иванович и Ивановна. Словарь популярных имён, правила словообразования, обратный поиск и ударения."
     />
-    <title>Отчество по имени отца</title>
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://gladkoff07.github.io/react-name-patronymic/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Отчество" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="Отчество по имени отца" />
+    <meta
+      property="og:description"
+      content="Иван → Иванович и Ивановна. Словарь популярных имён, правила, обратный поиск и ударения. Работает офлайн."
+    />
+    <meta property="og:url" content="https://gladkoff07.github.io/react-name-patronymic/" />
+    <meta
+      property="og:image"
+      content="https://gladkoff07.github.io/react-name-patronymic/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Отчество по имени отца: Иван → Иванович · Ивановна" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Отчество по имени отца" />
+    <meta
+      name="twitter:description"
+      content="Иван → Иванович и Ивановна. Словарь популярных имён, правила, обратный поиск и ударения."
+    />
+    <meta
+      name="twitter:image"
+      content="https://gladkoff07.github.io/react-name-patronymic/og-image.png"
+    />
+
+    <title>Отчество по имени отца — Иванович и Ивановна</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Отчество по имени отца",
+        "url": "https://gladkoff07.github.io/react-name-patronymic/",
+        "description": "Образование отчества по имени отца: словарь популярных имён, правила словообразования, обратный поиск и ударения.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "inLanguage": "ru",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" }
+      }
+    </script>
     <script>
       try {
         const stored = JSON.parse(localStorage.getItem('patronymic:settings') || 'null')
@@ -24,6 +71,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="max-width: 40rem; margin: 4rem auto; padding: 0 1rem; font-family: system-ui, sans-serif">
+        <h1>Отчество по имени отца</h1>
+        <p>
+          Для работы сервиса нужен JavaScript: отчества считаются прямо в браузере. Включите
+          JavaScript и обновите страницу.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

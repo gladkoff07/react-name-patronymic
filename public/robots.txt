@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gladkoff07.github.io/react-name-patronymic/sitemap.xml

@@ -1,5 +1,6 @@
 import { InfoCard } from '../../../shared/ui/InfoCard'
 import { CloseIcon } from '../../../shared/ui/icons'
+import { trackEvent } from '../../../shared/lib/analytics'
 import { useHistoryStore } from '../../../store/useHistoryStore'
 import { useSettingsStore } from '../../../store/useSettingsStore'
 import { GenderToggle } from './GenderToggle'
@@ -43,6 +44,7 @@ export function DirectView() {
 
     const { name: canonical, male, female, source } = next.result
     addHistory({ name: canonical, male, female, source })
+    trackEvent('patronymic_result', { source })
   }
 
   function pick(value: string) {
@@ -95,6 +97,9 @@ export function DirectView() {
 
         {result ? (
           <div className="mt-6">
+            <p className="sr-only" role="status">
+              {result.name}: {result.male}, {result.female}
+            </p>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
               <span>Отец:</span>
               <span className="font-medium text-slate-900 dark:text-slate-100">{result.name}</span>
@@ -142,7 +147,7 @@ export function DirectView() {
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-indigo-700/70 dark:text-indigo-300/70">
+                <p className="mt-2 text-xs text-indigo-700 dark:text-indigo-300/80">
                   «{result.input}» — уменьшительная форма, которая встречается у нескольких имён.
                 </p>
               </div>
@@ -187,7 +192,7 @@ export function DirectView() {
               <button
                 type="button"
                 onClick={clearHistory}
-                className="text-xs text-slate-400 underline-offset-2 transition hover:text-slate-700 hover:underline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:text-slate-200"
+                className="text-xs text-slate-500 underline-offset-2 transition hover:text-slate-700 hover:underline focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:text-slate-400 dark:hover:text-slate-200"
               >
                 очистить
               </button>

@@ -1,4 +1,5 @@
 import { useSettingsStore } from '../../../store/useSettingsStore'
+import { trackEvent } from '../../../shared/lib/analytics'
 
 /** Компактный переключатель «показывать ударения» для карточек результата. */
 export function StressToggle() {
@@ -8,7 +9,10 @@ export function StressToggle() {
   return (
     <button
       type="button"
-      onClick={toggleStress}
+      onClick={() => {
+        toggleStress()
+        trackEvent('stress_toggle', { enabled: !showStress })
+      }}
       aria-pressed={showStress}
       title="Показывать знак ударения в отчествах"
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none ${

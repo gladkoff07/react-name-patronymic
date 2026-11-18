@@ -26,7 +26,7 @@ interface ComboboxProps {
 }
 
 const inputClassName =
-  'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 pr-12 text-lg text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500'
+  'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 pr-12 text-lg text-slate-900 shadow-sm transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400'
 
 /** Поле с подсказками: клавиши, клик, очистка и доступность — в одном месте. */
 export function Combobox({
@@ -130,7 +130,7 @@ export function Combobox({
           {label}
         </label>
         {hint ? (
-          <span className="text-xs text-slate-400 dark:text-slate-500">{hint}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{hint}</span>
         ) : null}
       </div>
 
@@ -153,9 +153,10 @@ export function Combobox({
           }}
           type="text"
           role="combobox"
-          aria-expanded={open}
-          aria-controls={listboxId}
+          aria-expanded={open && filtered.length > 0}
+          aria-controls={filtered.length > 0 ? listboxId : undefined}
           aria-autocomplete="list"
+          aria-haspopup="listbox"
           aria-activedescendant={open && highlighted >= 0 ? optionId(highlighted) : undefined}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}
@@ -176,7 +177,7 @@ export function Combobox({
               inputRef.current?.focus()
             }}
             aria-label="Очистить поле"
-            className="absolute top-1/2 right-3 grid size-7 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            className="absolute top-1/2 right-3 grid size-7 -translate-y-1/2 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
             <CloseIcon className="size-4" />
           </button>
@@ -184,14 +185,14 @@ export function Combobox({
 
         {open ? (
           <div className="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/10 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40">
-            <div
-              role="listbox"
-              id={listboxId}
-              aria-label={listLabel}
-              className="max-h-72 overflow-y-auto overscroll-contain p-1.5 [scrollbar-width:thin]"
-            >
-              {filtered.length > 0 ? (
-                filtered.map((option, index) => {
+            {filtered.length > 0 ? (
+              <div
+                role="listbox"
+                id={listboxId}
+                aria-label={listLabel}
+                className="max-h-72 overflow-y-auto overscroll-contain p-1.5 [scrollbar-width:thin]"
+              >
+                {filtered.map((option, index) => {
                   const active = index === highlighted
                   return (
                     <div
@@ -213,17 +214,19 @@ export function Combobox({
                     >
                       <span className="truncate">{highlightMatch(option.value, value)}</span>
                       {option.hint ? (
-                        <span className="max-w-[45%] shrink-0 truncate text-xs text-slate-400 dark:text-slate-500">
+                        <span className="max-w-[45%] shrink-0 truncate text-xs text-slate-500 dark:text-slate-400">
                           {option.hint}
                         </span>
                       ) : null}
                     </div>
                   )
-                })
-              ) : (
-                <p className="px-3 py-4 text-sm text-slate-500 dark:text-slate-400">{emptyText}</p>
-              )}
-            </div>
+                })}
+              </div>
+            ) : (
+              <p role="status" className="px-3 py-4 text-sm text-slate-500 dark:text-slate-400">
+                {emptyText}
+              </p>
+            )}
           </div>
         ) : null}
       </div>

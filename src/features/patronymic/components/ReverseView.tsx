@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CopyButton } from '../../../shared/ui/CopyButton'
+import { trackEvent } from '../../../shared/lib/analytics'
 import { useSettingsStore } from '../../../store/useSettingsStore'
 import { getFatherName } from '../lib/reverse'
 import { withStress } from '../lib/stress'
@@ -16,6 +17,17 @@ export function ReverseView() {
   const error = !outcome.ok && outcome.error.code !== 'empty' ? outcome.error.message : undefined
   const result = outcome.ok ? outcome.result : null
 
+  function commit(value: string) {
+    const next = getFatherName(value)
+
+    if (!next.ok) {
+      if (next.error.code === 'not_found') trackEvent('reverse_not_found')
+      return
+    }
+
+    trackEvent('reverse_result', { matches: next.result.matches.length })
+  }
+
   return (
     <>
       <section className="pt-4 text-center sm:pt-8">
@@ -30,7 +42,7 @@ export function ReverseView() {
 
       <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white/85 p-5 shadow-xl shadow-slate-900/5 backdrop-blur sm:p-7 dark:border-slate-800 dark:bg-slate-900/70">
         <div className="space-y-5">
-          <PatronymicInput value={value} onChange={setValue} error={error} />
+          <PatronymicInput value={value} onChange={setValue} onCommit={commit} error={error} />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -58,6 +70,9 @@ export function ReverseView() {
 
         {result ? (
           <div className="mt-6">
+            <p className="sr-only" role="status">
+              Имя отца: {result.matches.map((match) => match.name).join(', ')}
+            </p>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
               <span>Отчество:</span>
               <span className="font-medium text-slate-900 dark:text-slate-100">{result.input}</span>
