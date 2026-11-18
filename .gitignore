@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Локальные заметки — не публикуем
-README.md
 PLAN.md
